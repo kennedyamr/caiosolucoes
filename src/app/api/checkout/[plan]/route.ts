@@ -1,4 +1,9 @@
 import { isPlanSlug, plans } from "@/lib/plans";
+import {
+  AsaasConfigurationError,
+  asaasApiUrl,
+  getAsaasApiKey,
+} from "@/lib/asaas-api";
 
 export const runtime = "nodejs";
 
@@ -73,12 +78,16 @@ export async function POST(
     return Response.json({ error: "Plano não encontrado." }, { status: 404 });
   }
 
-  const apiKey = process.env.ASAAS_API_KEY?.trim();
-  if (!apiKey) {
+  let apiKey: string;
+  let checkoutEndpoint: string;
+  try {
+    apiKey = getAsaasApiKey();
+    checkoutEndpoint = asaasApiUrl("checkouts");
+  } catch (error) {
+    if (!(error instanceof AsaasConfigurationError)) throw error;
     return Response.json(
       {
-        error:
-          "Checkout com cartão indisponível: configure ASAAS_API_KEY no servidor.",
+        error: `Checkout com cartão indisponível: ${error.message}`,
       },
       { status: 503 }
     );
@@ -120,7 +129,7 @@ export async function POST(
 
   let asaasResponse: Response;
   try {
-    asaasResponse = await fetch("https://api.asaas.com/v3/checkouts", {
+    asaasResponse = await fetch(checkoutEndpoint, {
       method: "POST",
       headers: {
         accept: "application/json",

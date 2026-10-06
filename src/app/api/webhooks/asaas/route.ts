@@ -1,6 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import {
   persistCheckoutEvent,
+  persistPixPaymentEvent,
   WebhookStoreConfigurationError,
   type CheckoutEventType,
 } from "@/lib/asaas-webhook-store";
@@ -74,6 +75,75 @@ export async function POST(request: Request) {
     typeof payload.event !== "string"
   ) {
     return Response.json({ error: "Evento inválido." }, { status: 400 });
+  }
+
+  if (
+    payload.event === "PAYMENT_CONFIRMED" ||
+    payload.event === "PAYMENT_RECEIVED" ||
+    payload.event === "PAYMENT_OVERDUE" ||
+    payload.event === "PAYMENT_DELETED" ||
+    payload.event === "PAYMENT_REFUNDED" ||
+    payload.event === "PAYMENT_PARTIALLY_REFUNDED" ||
+    payload.event === "PAYMENT_RECEIVED_IN_CASH_UNDONE"
+  ) {
+    const payment = payload.payment;
+    if (
+      !isRecord(payment) ||
+      typeof payment.id !== "string" ||
+      typeof payment.externalReference !== "string" ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        payment.externalReference
+      ) ||
+      payment.billingType !== "PIX" ||
+      typeof payment.value !== "number" ||
+      !Number.isFinite(payment.value) ||
+      payment.value <= 0
+    ) {
+      return Response.json({ error: "Dados da cobrança Pix inválidos." }, { status: 400 });
+    }
+
+    try {
+      const result = await persistPixPaymentEvent({
+        eventId: payload.id,
+        eventType: payload.event,
+        paymentId: payment.id,
+        orderId: payment.externalReference,
+        amountCents: Math.round(payment.value * 100),
+        payload: {
+          id: payload.id,
+          event: payload.event,
+          payment: {
+            id: payment.id,
+            externalReference: payment.externalReference,
+            billingType: payment.billingType,
+            value: payment.value,
+            status: payment.status,
+          },
+        },
+      });
+      return Response.json({
+        received: true,
+        duplicate: result === "duplicate",
+        ignored: result === "ignored",
+      });
+    } catch (error) {
+      if (error instanceof WebhookStoreConfigurationError) {
+        console.error(error.message);
+        return Response.json(
+          {
+            error:
+              "Persistência do webhook indisponível: configure DATABASE_URL com PostgreSQL.",
+          },
+          { status: 503 }
+        );
+      }
+
+      console.error("Failed to persist the Asaas Pix payment event.", error);
+      return Response.json(
+        { error: "Não foi possível persistir o evento do Asaas." },
+        { status: 500 }
+      );
+    }
   }
 
   if (!isCheckoutEventType(payload.event)) {
