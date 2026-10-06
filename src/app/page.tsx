@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { formatPrice, plans } from "@/lib/plans";
 
 const whatsappNumber = "5588999412505";
@@ -221,6 +222,15 @@ export default function Home() {
 
             <div className="plans-grid">
               <article className="plan-card">
+                <Image
+                  className="plan-card-image"
+                  src={`/${plans.mensal.imageFile}`}
+                  alt="Banner do plano mensal Caio Soluções"
+                  width={1536}
+                  height={1024}
+                  sizes="(max-width: 680px) 100vw, 50vw"
+                  quality={90}
+                />
                 <div className="plan-card-top">
                   <span className="plan-label">Para começar</span>
                   <span className="plan-period">1 mês</span>
@@ -258,6 +268,15 @@ export default function Home() {
               </article>
 
               <article className="plan-card plan-card-featured">
+                <Image
+                  className="plan-card-image"
+                  src={`/${plans.anual.imageFile}`}
+                  alt="Banner do plano anual Caio Soluções"
+                  width={1264}
+                  height={843}
+                  sizes="(max-width: 680px) 100vw, 50vw"
+                  quality={90}
+                />
                 <span className="popular-badge">MAIS ECONÔMICO</span>
                 <div className="plan-card-top">
                   <span className="plan-label">Para aproveitar mais</span>

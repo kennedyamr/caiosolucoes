@@ -543,6 +543,14 @@ summary:focus-visible {
   box-shadow: 0 7px 25px rgba(52, 74, 54, 0.065);
 }
 
+.plan-card-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
 .popular-badge {
   position: absolute;
   top: -11px;
