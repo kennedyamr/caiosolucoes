@@ -1,8 +1,11 @@
-import Link from "next/link";
 import Image from "next/image";
 import { formatPrice, plans } from "@/lib/plans";
 
 const whatsappNumber = "5588999412505";
+const asaasPaymentLinks = {
+  mensal: "https://www.asaas.com/000/c/f596ighu7ceixd3m",
+  anual: "https://www.asaas.com/000/c/rc7g5h27fcv6m63w",
+};
 
 function whatsappLink(message: string) {
   return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
@@ -249,13 +252,15 @@ export default function Home() {
                   </span>
                   <span className="pix-discount">Melhor preço</span>
                 </div>
-                <Link
+                <a
                   className="button button-outline plan-button"
-                  href="/checkout/mensal"
+                  href={asaasPaymentLinks.mensal}
+                  target="_blank"
+                  rel="noreferrer"
                 >
                   Comprar pelo site
                   <ArrowIcon />
-                </Link>
+                </a>
                 <a
                   className="button button-primary plan-button plan-whatsapp-button"
                   href={whatsappLink("Olá! Quero comprar o plano de 1 mês.")}
@@ -296,13 +301,15 @@ export default function Home() {
                   </span>
                   <span className="pix-discount">Melhor preço</span>
                 </div>
-                <Link
+                <a
                   className="button button-outline plan-button"
-                  href="/checkout/anual"
+                  href={asaasPaymentLinks.anual}
+                  target="_blank"
+                  rel="noreferrer"
                 >
                   Comprar pelo site
                   <ArrowIcon />
-                </Link>
+                </a>
                 <a
                   className="button button-primary plan-button plan-whatsapp-button"
                   href={whatsappLink("Olá! Quero comprar o plano de 1 ano.")}
