@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { isPlanSlug, plans } from "@/lib/plans";
 import { parseInfinitePayCheckoutUrl } from "@/lib/infinitepay-url";
 
@@ -71,7 +70,6 @@ export async function POST(
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         handle,
-        order_nsu: randomUUID(),
         items: [
           {
             quantity: 1,
