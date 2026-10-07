@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { isPlanSlug, plans } from "@/lib/plans";
+import { parseInfinitePayCheckoutUrl } from "@/lib/infinitepay-url";
 
 export const runtime = "nodejs";
 
@@ -79,20 +80,8 @@ export async function POST(
     );
   }
 
-  let checkoutUrl: URL;
-  try {
-    checkoutUrl = new URL(checkout.url);
-  } catch {
-    return Response.json(
-      { error: "A InfinitePay retornou um link de checkout inválido." },
-      { status: 502 }
-    );
-  }
-
-  if (
-    checkoutUrl.protocol !== "https:" ||
-    checkoutUrl.hostname !== "checkout.infinitepay.com.br"
-  ) {
+  const checkoutUrl = parseInfinitePayCheckoutUrl(checkout.url);
+  if (!checkoutUrl) {
     return Response.json(
       { error: "A InfinitePay retornou um link de checkout inválido." },
       { status: 502 }

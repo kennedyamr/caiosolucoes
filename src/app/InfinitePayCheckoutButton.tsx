@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { parseInfinitePayCheckoutUrl } from "@/lib/infinitepay-url";
 
 export default function InfinitePayCheckoutButton({
   plan,
@@ -37,11 +38,8 @@ export default function InfinitePayCheckoutButton({
         throw new Error(message);
       }
 
-      const checkoutUrl = new URL(result.checkoutUrl);
-      if (
-        checkoutUrl.protocol !== "https:" ||
-        checkoutUrl.hostname !== "checkout.infinitepay.com.br"
-      ) {
+      const checkoutUrl = parseInfinitePayCheckoutUrl(result.checkoutUrl);
+      if (!checkoutUrl) {
         throw new Error("A InfinitePay retornou um link de checkout inválido.");
       }
 
