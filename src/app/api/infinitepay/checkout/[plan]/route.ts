@@ -10,6 +10,42 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+function safeErrorDetails(value: unknown): Record<string, unknown> {
+  if (!isRecord(value)) return {};
+
+  const result: Record<string, unknown> = {};
+  for (const key of ["success", "error", "message", "code", "error_code"]) {
+    const field = value[key];
+    if (typeof field === "boolean") {
+      result[key] = field;
+    } else if (typeof field === "string") {
+      result[key] = field.slice(0, 500);
+    }
+  }
+
+  for (const key of ["errors", "error_messages", "details"]) {
+    const field = value[key];
+    if (!Array.isArray(field)) continue;
+
+    const items: unknown[] = field.slice(0, 10).flatMap((item): unknown[] => {
+      if (typeof item === "string") return [item.slice(0, 500)];
+      if (!isRecord(item)) return [];
+
+      const detail: Record<string, string> = {};
+      for (const detailKey of ["code", "field", "message", "description"]) {
+        if (typeof item[detailKey] === "string") {
+          detail[detailKey] = item[detailKey].slice(0, 500);
+        }
+      }
+      return Object.keys(detail).length > 0 ? [detail] : [];
+    });
+
+    if (items.length > 0) result[key] = items;
+  }
+
+  return result;
+}
+
 export async function POST(
   _request: Request,
   context: RouteContext<"/api/infinitepay/checkout/[plan]">
@@ -57,8 +93,19 @@ export async function POST(
 
   if (!response.ok) {
     console.error("InfinitePay rejected checkout creation.", response.status);
+    const responseText = await response.text();
+    let responseBody: unknown;
+    try {
+      responseBody = JSON.parse(responseText);
+    } catch {
+      responseBody = null;
+    }
     return Response.json(
-      { error: "A InfinitePay não conseguiu iniciar o checkout." },
+      {
+        error: "A InfinitePay não conseguiu iniciar o checkout.",
+        infinitepayStatus: response.status,
+        infinitepayError: safeErrorDetails(responseBody),
+      },
       { status: 502 }
     );
   }
