@@ -10,6 +10,12 @@ import {
 
 export const runtime = "nodejs";
 
+const allowedOrigins = new Set([
+  "https://caiosolucoes.vercel.app",
+  "https://caiosolucoes.com.br",
+  "https://www.caiosolucoes.com.br",
+]);
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -43,7 +49,7 @@ export async function POST(
     return errorResponse(error.message, 503);
   }
 
-  if (requestOrigin && requestOrigin !== siteOrigin) {
+  if (requestOrigin && !allowedOrigins.has(requestOrigin)) {
     return errorResponse("Origem não autorizada para iniciar o checkout.", 403);
   }
 
