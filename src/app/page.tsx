@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { formatPrice } from "@/lib/plans";
-import InfinitePayCheckoutButton from "@/app/InfinitePayCheckoutButton";
+import FixedPixPayment from "@/app/FixedPixPayment";
 import {
   activeProducts,
   offerProducts,
@@ -129,7 +129,11 @@ function ProductCard({
           <span className="shop-pix-label">No Pix</span>
           <strong>{formatPrice(product.pixPrice)}</strong>
         </div>
-        <InfinitePayCheckoutButton plan={product.planSlug} />
+        <FixedPixPayment
+          productName={product.name}
+          pixCode={product.pixCode}
+          pixPrice={product.pixPrice}
+        />
         <a
         className="shop-product-whatsapp"
         href={whatsappLink(product.whatsappMessage)}

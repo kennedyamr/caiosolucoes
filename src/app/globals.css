@@ -2247,6 +2247,122 @@ summary:focus-visible {
   background: #4f704f;
 }
 
+.shop-fixed-pix {
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px solid #354239;
+  border-radius: 6px;
+  background: #151b17;
+}
+
+.shop-fixed-pix-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.shop-fixed-pix-heading > div {
+  display: grid;
+  gap: 4px;
+}
+
+.shop-fixed-pix-heading > div > span {
+  color: #aec0ae;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.shop-fixed-pix-heading > div > strong {
+  color: #f0f3ef;
+  font-size: 13px;
+}
+
+.shop-fixed-pix-price {
+  color: #d6e5d2;
+  font-size: 17px;
+  white-space: nowrap;
+}
+
+.shop-fixed-pix-body {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  margin-block: 13px 12px;
+}
+
+.shop-fixed-pix-qr {
+  display: block;
+  width: 160px;
+  height: 160px;
+  padding: 7px;
+  border-radius: 5px;
+  background: #fff;
+}
+
+.shop-fixed-pix-body p {
+  margin: 0;
+  color: #aab5ac;
+  font-size: 10px;
+  text-align: center;
+}
+
+.shop-fixed-pix-label {
+  display: block;
+  margin-bottom: 6px;
+  color: #c6d1c7;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.shop-fixed-pix-code {
+  display: block;
+  width: 100%;
+  min-height: 58px;
+  resize: vertical;
+  padding: 8px;
+  border: 1px solid #3b473e;
+  border-radius: 4px;
+  background: #0f1411;
+  color: #d2dbd2;
+  font-family: "Courier New", monospace;
+  font-size: 9px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.shop-fixed-pix-code:focus {
+  border-color: #829b80;
+  outline: 2px solid rgba(137, 169, 139, 0.2);
+}
+
+.shop-fixed-pix-copy {
+  width: 100%;
+  min-height: 38px;
+  margin-top: 8px;
+  border: 1px solid #658267;
+  border-radius: 5px;
+  background: #405e42;
+  color: #fff;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.shop-fixed-pix-copy:hover {
+  background: #4f704f;
+}
+
+.shop-fixed-pix-status {
+  min-height: 13px;
+  margin: 5px 0 0;
+  color: #c1d6bd;
+  font-size: 9px;
+}
+
 .shop-checkout-error {
   margin: 9px 0 0;
   color: #f1b8ac;

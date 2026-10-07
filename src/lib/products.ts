@@ -16,6 +16,7 @@ export type Product = {
   image: string;
   regularPrice: number;
   pixPrice: number;
+  pixCode: string;
   badge: string | null;
   whatsappMessage: string;
   type: "digital";
@@ -34,6 +35,8 @@ const planProducts: Record<PlanSlug, Product> = {
     image: "/images/unitv-mensal.webp",
     regularPrice: plans.mensal.cardPriceInCents,
     pixPrice: plans.mensal.pixPriceInCents,
+    pixCode:
+      "00020126580014BR.GOV.BCB.PIX01361e3ad67a-8a68-4a0c-91a1-02257ae1b9cb520400005303986540524.905802BR5923VALDIR DE AMORIM SERAFM6009SAO PAULO6229052584ho4jyovsc7vrjv0pny7qkbm6304D890",
     badge: "MAIS VENDIDO",
     whatsappMessage:
       "Olá! Quero comprar o plano mensal da Caio Soluções por R$ 24,90.",
@@ -51,6 +54,8 @@ const planProducts: Record<PlanSlug, Product> = {
     image: "/images/unitv-anual.webp",
     regularPrice: plans.anual.cardPriceInCents,
     pixPrice: plans.anual.pixPriceInCents,
+    pixCode:
+      "00020126580014BR.GOV.BCB.PIX01361e3ad67a-8a68-4a0c-91a1-02257ae1b9cb5204000053039865406179.905802BR5923VALDIR DE AMORIM SERAFM6009SAO PAULO62290525cll8500ddqzgdrpastacfr22o63046C7A",
     badge: "MELHOR CUSTO-BENEFÍCIO",
     whatsappMessage:
       "Olá! Quero comprar o plano anual da Caio Soluções por R$ 179,90.",
