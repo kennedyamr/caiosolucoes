@@ -47,6 +47,53 @@ function errorResponse(error: string, status: number) {
   return Response.json({ error }, { status });
 }
 
+function redactSecret(value: string, secret: string) {
+  return value.replaceAll(secret, "[REDACTED]").slice(0, 500);
+}
+
+function safePagBankDiagnostics(
+  body: unknown,
+  token: string
+): Record<string, unknown> {
+  if (!isRecord(body)) return {};
+  const diagnostics: Record<string, unknown> = {};
+
+  for (const field of ["error_messages", "error", "description", "message"]) {
+    const value = body[field];
+    if (typeof value === "string") {
+      diagnostics[field] = redactSecret(value, token);
+    } else if (Array.isArray(value)) {
+      const messages: unknown[] = [];
+      for (const item of value) {
+        if (typeof item === "string") {
+          messages.push(redactSecret(item, token));
+        } else if (isRecord(item)) {
+          const details: Record<string, string> = {};
+          for (const key of ["code", "field", "message", "description"]) {
+            if (typeof item[key] === "string") {
+              details[key] = redactSecret(item[key], token);
+            }
+          }
+          if (Object.keys(details).length > 0) messages.push(details);
+        }
+      }
+      if (messages.length > 0) {
+        diagnostics[field] = messages;
+      }
+    } else if (isRecord(value)) {
+      const details: Record<string, string> = {};
+      for (const key of ["code", "field", "message", "description"]) {
+        if (typeof value[key] === "string") {
+          details[key] = redactSecret(value[key], token);
+        }
+      }
+      if (Object.keys(details).length > 0) diagnostics[field] = details;
+    }
+  }
+
+  return diagnostics;
+}
+
 export async function POST(
   request: Request,
   context: RouteContext<"/api/pagbank/checkout/[plan]">
@@ -133,10 +180,25 @@ export async function POST(
   }
 
   if (!pagBankResponse.ok) {
+    const responseText = await pagBankResponse.text();
+    let responseBody: unknown;
+    try {
+      responseBody = JSON.parse(responseText);
+    } catch {
+      responseBody = null;
+    }
+    const pagbankError = safePagBankDiagnostics(responseBody, token);
     console.error("PagBank rejected checkout creation.", pagBankResponse.status);
-    return errorResponse(
-      "O PagBank não conseguiu iniciar o checkout. Tente novamente.",
-      502
+    return Response.json(
+      {
+        error: "PagBank rejeitou o checkout.",
+        pagbankStatus: pagBankResponse.status,
+        pagbankError:
+          Object.keys(pagbankError).length > 0
+            ? pagbankError
+            : "Resposta sem campos de diagnóstico seguros reconhecidos.",
+      },
+      { status: 502 }
     );
   }
 
