@@ -10,11 +10,34 @@ import {
 
 export const runtime = "nodejs";
 
-const allowedOrigins = new Set([
-  "https://caiosolucoes.vercel.app",
-  "https://caiosolucoes.com.br",
-  "https://www.caiosolucoes.com.br",
+const allowedHostnames = new Set([
+  "caiosolucoes.vercel.app",
+  "caiosolucoes.com.br",
+  "www.caiosolucoes.com.br",
 ]);
+const vercelDeploymentHostname =
+  /^caiosolucoes-[a-z0-9-]+-caiofilhoamorim50-5666\.vercel\.app$/;
+
+function isAllowedOrigin(value: string | null): boolean {
+  if (!value) return false;
+
+  try {
+    const origin = new URL(value);
+    return (
+      origin.protocol === "https:" &&
+      origin.username === "" &&
+      origin.password === "" &&
+      origin.port === "" &&
+      origin.pathname === "/" &&
+      origin.search === "" &&
+      origin.hash === "" &&
+      (allowedHostnames.has(origin.hostname) ||
+        vercelDeploymentHostname.test(origin.hostname))
+    );
+  } catch {
+    return false;
+  }
+}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -49,7 +72,7 @@ export async function POST(
     return errorResponse(error.message, 503);
   }
 
-  if (requestOrigin && !allowedOrigins.has(requestOrigin)) {
+  if (!isAllowedOrigin(requestOrigin)) {
     return errorResponse("Origem não autorizada para iniciar o checkout.", 403);
   }
 
