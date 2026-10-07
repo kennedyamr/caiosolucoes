@@ -652,6 +652,70 @@ summary:focus-visible {
   font-size: 12px;
 }
 
+.pagbank-method-picker {
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid #e3ebdf;
+  border-radius: 4px;
+  background: #f8faf6;
+}
+
+.pagbank-method-picker > p {
+  margin: 0 0 9px;
+  color: #566458;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.pagbank-method-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.pagbank-method-option {
+  display: flex;
+  min-width: 0;
+  min-height: 67px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 8px 10px;
+  border: 1px solid #dce5d8;
+  border-radius: 4px;
+  background: #fff;
+  color: #345140;
+  cursor: pointer;
+  text-align: left;
+}
+
+.pagbank-method-option:hover,
+.pagbank-method-option:focus-visible {
+  border-color: #9aaf9d;
+  background: #f4f7f0;
+}
+
+.pagbank-method-option:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.pagbank-method-option span {
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.pagbank-method-option strong {
+  margin-top: 3px;
+  font-size: 13px;
+}
+
+.pagbank-method-option small {
+  margin-top: 2px;
+  color: #72806f;
+  font-size: 9px;
+}
+
 .plan-whatsapp-button {
   margin-top: 9px;
 }
